@@ -2,9 +2,13 @@ import Link from 'next/link'
 import useSWR from 'swr'
 import Image from 'next/image'
 import { client } from '../util/genqlClient'
+import {withProtected} from './../routes/route';
+import useAuth from './../store/auth-context';
+import Button from './../components/ui/button';
 
-export default function Home() {
-
+function Home() {
+  const { logout} = useAuth();
+  
   const fetcher = () =>
     client.query({
       getItems: {
@@ -21,10 +25,12 @@ export default function Home() {
   return (
     <div>
       <div className="right">
+        <Button onClick={() => logout()} text="Logout" />
+      </div>
+      <div className="right">
         <Link href="/create">
           <a className="btn"> Create Item &#8594;</a>
         </Link>
-
       </div>
       {error && <p>Oops, something went wrong!</p>}
       <ul>
@@ -50,3 +56,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default  withProtected(Home);
